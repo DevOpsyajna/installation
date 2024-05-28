@@ -1,24 +1,10 @@
 ---
-- name: Install Chocolatey and Visual Studio Code on Windows
+- name: Install Visual Studio Code on Windows
   hosts: 172.16.0.67
   gather_facts: no
   tasks:
-    - name: Download Chocolatey installer script
-      win_get_url:
-        url: https://chocolatey.org/install.ps1
-        dest: C:\Temp\install_chocolatey.ps1
-
-    - name: Install Chocolatey
-      win_command: powershell.exe -ExecutionPolicy Bypass -File C:\Temp\install_chocolatey.ps1
-      args:
-        creates: C:\ProgramData\chocolatey\bin\choco.exe
-
-    - name: Ensure Chocolatey is in the PATH
-      win_environment:
+    - name: Install Visual Studio Code
+      chocolatey.chocolatey.win_chocolatey:
+        name: vscode
         state: present
-        name: PATH
-        value: C:\ProgramData\chocolatey\bin
-        level: machine
-
-    - name: Install Visual Studio Code using Chocolatey
-      win_command: choco install vscode --yes --accept-license
+        params: "--accept-license"
