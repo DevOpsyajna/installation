@@ -1,13 +1,8 @@
----
-- name: Install AnyDesk and VLC Media Player on Windows
+- name: Install AnyDesk on Windows
   hosts: 172.16.0.67
+  gather_facts: no
   tasks:
-    - name: Install AnyDesk
-      win_chocolatey:
-        name: anydesk
-        state: present
-
-    - name: Install VLC Media Player
-      win_chocolatey:
-        name: vlc
-        state: present
+    - name: Download AnyDesk installer
+      win_get_url:
+        url: https://download.anydesk.com/AnyDesk.exe
+        dest: C:\Temp\AnyDesk.exe
