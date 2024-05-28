@@ -4,7 +4,7 @@
   gather_facts: no
   tasks:
     - name: Install VLC media player
-      win_package:
+      win_chocolatey:
         name: vlc
         state: present
 
