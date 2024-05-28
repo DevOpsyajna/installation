@@ -20,8 +20,5 @@
         value: C:\ProgramData\chocolatey\bin
         level: machine
 
-    - name: Refresh environment variables to include Chocolatey
-      win_command: powershell.exe -noprofile -command "[System.Environment]::SetEnvironmentVariable('Path', [System.Environment]::GetEnvironmentVariable('Path', 'Machine'), 'Process')"
-
     - name: Install Visual Studio Code using Chocolatey
       win_command: choco install vscode --yes --accept-license
