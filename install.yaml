@@ -7,14 +7,8 @@
         url: https://download.anydesk.com/AnyDesk.exe
         dest: C:\Temp\AnyDesk.exe
 
-    - name: Install AnyDesk
-      win_command: C:\Temp\AnyDesk.exe
-
     - name: Download VS Code installer
       win_get_url:
         url: https://update.code.visualstudio.com/latest/win32-x64-user/stable
         dest: C:\Temp\VSCodeSetup.exe
-
-    - name: Install VS Code
-      win_command: C:\Temp\VSCodeSetup.exe
 
