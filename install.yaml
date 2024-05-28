@@ -4,9 +4,8 @@
   gather_facts: no
   tasks:
     - name: Install VLC media player
-      win_chocolatey:
-        name: vlc
-        state: present
+      win_shell: |
+        choco install vlc -y
 
     - name: Download AnyDesk installer
       win_get_url:
