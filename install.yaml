@@ -1,10 +1,16 @@
-- name: Install Chocolatey
-  win_chocolatey:
-    name: chocolatey
-    state: present
+- name: Install AnyDesk on Windows
+  hosts: 172.16.0.67
+  gather_facts: no
+  tasks:
+    - name: Download AnyDesk installer
+      win_get_url:
+        url: https://download.anydesk.com/AnyDesk.exe
+        dest: C:\Temp\AnyDesk.exe
 
-- name: Install VS Code
-  win_chocolatey:
-    name: vscode
-    state: present
-    arguments: '--allow-warnings --no-prompt'
+    - name: Download VS Code installer
+      win_get_url:
+        url: https://update.code.visualstudio.com/latest/win32-x64-user/stable
+        dest: C:\Temp\VSCodeSetup.exe
+
+    - name: Install VS Code
+      win_command: C:\Temp\VSCodeSetup.exe /silent /mergetasks=!runcode
