@@ -1,10 +1,10 @@
----
-- name: Install AnyDesk and Visual Studio Code on Windows
-  hosts: 172.16.0.67
-  gather_facts: no
-  tasks:
-    - name: Install Visual Studio Code
-      chocolatey.chocolatey.win_chocolatey:
-        name: vscode
-        state: present
-        params: "--accept-license"
+- name: Install Chocolatey
+  win_chocolatey:
+    name: chocolatey
+    state: present
+
+- name: Install VS Code
+  win_chocolatey:
+    name: vscode
+    state: present
+    arguments: '--allow-warnings --no-prompt'
