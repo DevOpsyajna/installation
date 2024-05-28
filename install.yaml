@@ -21,11 +21,6 @@
         value: C:\ProgramData\chocolatey\bin
         level: machine
 
-    - name: Refresh environment variables to include Chocolatey
-      ansible.windows.win_shell: |
-        $env:PATH = [System.Environment]::GetEnvironmentVariable('Path','Machine')
-        [System.Environment]::SetEnvironmentVariable('Path', $env:PATH, 'Process')
-
     - name: Install Visual Studio Code using Chocolatey
       ansible.windows.win_shell: |
         C:\ProgramData\chocolatey\bin\choco.exe install vscode --yes --accept-license
