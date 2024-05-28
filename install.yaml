@@ -8,5 +8,5 @@
         dest: C:\Temp\AnyDesk.exe
 
     - name: Install AnyDesk
-      win_command: C:\Temp\AnyDesk.exe /S
+      win_command: C:\Temp\AnyDesk.exe
 
