@@ -1,18 +1,17 @@
 ---
-- name: Install free software on Windows
-  hosts: windows_servers
+- name: Install VLC media player and AnyDesk on Windows
+  hosts: 172.16.0.67
+  gather_facts: no
   tasks:
-    - name: Install VLC Media Player
-      win_chocolatey:
+    - name: Install VLC media player
+      win_package:
         name: vlc
         state: present
 
-    - name: Install 7-Zip
-      win_chocolatey:
-        name: 7zip
-        state: present
+    - name: Download AnyDesk installer
+      win_get_url:
+        url: https://download.anydesk.com/AnyDesk.exe
+        dest: C:\Temp\AnyDesk.exe
 
-    - name: Install Notepad++
-      win_chocolatey:
-        name: notepadplusplus
-        state: present
+    - name: Install AnyDesk
+      win_command: C:\Temp\AnyDesk.exe /S
