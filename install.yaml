@@ -1,5 +1,5 @@
 - name: Install software
-  hosts: windows_machines  # Replace with your target windows machine group
+  hosts: 172.16.0.67  # Replace with your target windows machine group
 
   tasks:
     # Task 1: Install software with traditional installer (MSI/EXE)
