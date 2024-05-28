@@ -1,29 +1,19 @@
----
-- name: Install Chocolatey and Visual Studio Code on Windows
+- name: Install Common Free Software with Chocolatey
   hosts: 172.16.0.67
-  gather_facts: no
-  collections:
-    - community.windows
-    - ansible.windows
-
+  gather_facts: false
   tasks:
-    - name: Install Chocolatey
-      ansible.windows.win_command: >
-        Set-ExecutionPolicy Bypass -Scope Process -Force;
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-      args:
-        creates: C:\ProgramData\chocolatey\bin\choco.exe
-
-    - name: Ensure Chocolatey is in the PATH
-      ansible.windows.win_environment:
+    - name: Install Chocolatey (if not already installed)
+      win_chocolatey:
+        name: chocolatey
         state: present
-        name: PATH
-        value: C:\ProgramData\chocolatey\bin
-        level: machine
 
-    - name: Install Visual Studio Code using Chocolatey
-      chocolatey.chocolatey.win_chocolatey:
-        name: vscode
+    - name: Install common free software packages
+      win_chocolatey:
+        name: "{{ item }}"
         state: present
-        params: "--accept-license"
+      loop:
+        - googlechrome
+        - firefox
+        - vscode
+        - notepadplusplus
+        - git
