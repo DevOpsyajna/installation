@@ -3,13 +3,17 @@
   hosts: 172.16.0.67
   gather_facts: no
   tasks:
+    - name: Download Chocolatey installer script
+      win_get_url:
+        url: https://chocolatey.org/install.ps1
+        dest: C:\Temp\install_chocolatey.ps1
+
     - name: Install Chocolatey
-      win_command: |
-        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      win_command: powershell.exe -ExecutionPolicy Bypass -File C:\Temp\install_chocolatey.ps1
       args:
         creates: C:\ProgramData\chocolatey\bin\choco.exe
 
-    - name: Ensure chocolatey is in the PATH
+    - name: Ensure Chocolatey is in the PATH
       win_environment:
         state: present
         name: PATH
