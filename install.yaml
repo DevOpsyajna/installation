@@ -1,6 +1,6 @@
 ---
 - name: Install Chocolatey and Visual Studio Code on Windows
-  hosts: windows_servers
+  hosts: 172.16.0.67
   gather_facts: no
   collections:
     - community.windows
