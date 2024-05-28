@@ -3,29 +3,12 @@
   hosts: 172.16.0.67
   gather_facts: no
   tasks:
-    - name: Install Chocolatey (if not already installed)
-      ansible.windows.win_command: >
-        Set-ExecutionPolicy Bypass -Scope Process -Force;
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    - name: Download Chocolatey installer script
+      win_get_url:
+        url: https://chocolatey.org/install.ps1
+        dest: C:\Temp\install_chocolatey.ps1
+
+    - name: Install Chocolatey
+      win_command: powershell.exe -ExecutionPolicy Bypass -File C:\Temp\install_chocolatey.ps1
       args:
         creates: C:\ProgramData\chocolatey\bin\choco.exe
-
-    - name: Ensure Chocolatey is installed
-      ansible.windows.win_stat:
-        path: C:\ProgramData\chocolatey\bin\choco.exe
-      register: choco_installed
-
-    - name: Add Chocolatey to PATH if not present
-      ansible.windows.win_environment:
-        state: present
-        name: PATH
-        value: C:\ProgramData\chocolatey\bin
-        level: machine
-      when: not choco_installed.stat.exists
-
-    - name: Install Visual Studio Code using Chocolatey
-      ansible.windows.win_chocolatey:
-        name: vscode
-        state: present
-        params: "--accept-license"
