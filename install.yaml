@@ -1,24 +1,23 @@
-- name: Install software
-  hosts: 172.16.0.67  # Replace with your target windows machine group
-
+---
+- name: Install Chocolatey and Visual Studio Code on Windows
+  hosts: 172.16.0.67
+  gather_facts: no
   tasks:
-    # Task 1: Install software with traditional installer (MSI/EXE)
-    - name: Install software with MSI/EXE (if installer path provided)
-      win_package:
-        path: "{{ software_installer_path.vars }}"  # Get path from a variable
-        state: present
-      when: software_installer_path is defined
+    - name: Install Chocolatey
+      win_command: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      args:
+        creates: C:\ProgramData\chocolatey\bin\choco.exe
 
-    # Task 2: Install software with Chocolatey (if Chocolatey is already installed)
-    - name: Install software with Chocolatey
+    - name: Ensure chocolatey is in the PATH
+      win_environment:
+        state: present
+        name: PATH
+        value: C:\ProgramData\chocolatey\bin
+        level: machine
+
+    - name: Install Visual Studio Code using Chocolatey
       win_chocolatey:
-        name: "{{ software_name.vars }}"  # Get name from a variable
+        name: vscode
         state: present
-      when:
-        - not software_installer_path is defined  # Only run if no MSI/EXE path provided
-        - win_chocolatey.chocolatey.version is defined  # Check if Chocolatey is installed
-
-  vars:
-    # Define variables for software installer path and name based on your needs
-    software_installer_path: ""
-    software_name: ""
+        params: "--accept-license"
