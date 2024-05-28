@@ -6,6 +6,7 @@
     - chocolatey.chocolatey
     - community.windows
     - ansible.windows
+    - community.windows
   tasks:
     - name: Download AnyDesk installer
       community.windows.win_get_url:
