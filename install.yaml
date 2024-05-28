@@ -2,34 +2,67 @@
 - name: Install Chocolatey and Visual Studio Code on Windows
   hosts: 172.16.0.67
   gather_facts: no
-  collections:
-    - community.windows
-    - ansible.windows
-
   tasks:
-    - name: Install Chocolatey (if not already installed)
-      ansible.windows.win_command: >
-        Set-ExecutionPolicy Bypass -Scope Process -Force;
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    - name: Check if PowerShell is available in PATH
+      win_command: where powershell
+      register: powershell_check
+      ignore_errors: yes
+
+    - name: Debug PowerShell check result
+      debug:
+        var: powershell_check
+
+    - name: Check if PowerShell is available in System32
+      win_command: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command "$PSVersionTable.PSVersion"
+      register: powershell_check_system32
+      ignore_errors: yes
+
+    - name: Debug System32 PowerShell check result
+      debug:
+        var: powershell_check_system32
+
+    - name: Determine PowerShell path
+      set_fact:
+        powershell_executable: >
+          {% if powershell_check.rc == 0 %}
+            powershell.exe
+          {% elif powershell_check_system32.rc == 0 %}
+            C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+          {% else %}
+            None
+          {% endif %}
+
+    - name: Fail if PowerShell executable is not found
+      fail:
+        msg: "PowerShell executable not found in default locations."
+      when: powershell_executable == "None"
+
+    - name: Debug PowerShell executable path
+      debug:
+        var: powershell_executable
+
+    - name: Download Chocolatey installer script
+      ansible.windows.win_get_url:
+        url: https://chocolatey.org/install.ps1
+        dest: C:\Temp\install_chocolatey.ps1
+
+    - name: Install Chocolatey
+      ansible.windows.win_shell: |
+        {{ powershell_executable }} -ExecutionPolicy Bypass -File C:\Temp\install_chocolatey.ps1
       args:
         creates: C:\ProgramData\chocolatey\bin\choco.exe
 
-    - name: Ensure Chocolatey is installed
-      ansible.windows.win_stat:
-        path: C:\ProgramData\chocolatey\bin\choco.exe
-      register: choco_installed
-
-    - name: Add Chocolatey to PATH if not present
+    - name: Ensure Chocolatey is in the PATH
       ansible.windows.win_environment:
         state: present
         name: PATH
         value: C:\ProgramData\chocolatey\bin
         level: machine
-      when: not choco_installed.stat.exists
+
+    - name: Refresh environment variables to include Chocolatey
+      ansible.windows.win_shell: |
+        {{ powershell_executable }} -noprofile -command "[System.Environment]::SetEnvironmentVariable('Path', [System.Environment]::GetEnvironmentVariable('Path', 'Machine'), 'Process')"
 
     - name: Install Visual Studio Code using Chocolatey
-      ansible.windows.win_command: choco install vscode --yes --acceptlicense
-      args:
-        creates: C:\Program Files\Microsoft VS Code\code.exe
-
+      ansible.windows.win_shell: |
+        C:\ProgramData\chocolatey\bin\choco.exe install vscode --yes --accept-license
