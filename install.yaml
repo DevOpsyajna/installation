@@ -1,9 +1,14 @@
-- name: Install AnyDesk on Windows
+---
+- name: Install AnyDesk and Visual Studio Code on Windows
   hosts: 172.16.0.67
   gather_facts: no
+  collections:
+    - chocolatey.chocolatey
+    - community.windows
+    - ansible.windows
   tasks:
     - name: Download AnyDesk installer
-      win_get_url:
+      community.windows.win_get_url:
         url: https://download.anydesk.com/AnyDesk.exe
         dest: C:\Temp\AnyDesk.exe
 
