@@ -12,3 +12,6 @@
         url: https://update.code.visualstudio.com/latest/win32-x64-user/stable
         dest: C:\Temp\VSCodeSetup.exe
 
+    - name: Install VS Code
+      win_command: C:\Temp\VSCodeSetup.exe 
+
