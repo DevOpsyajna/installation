@@ -1,13 +1,8 @@
 ---
-- name: Install software on Windows
+- name: Install Visual Studio Code using Chocolatey
   hosts: 172.16.0.67
   tasks:
-    - name: Ensure Chocolatey is installed
-      community.windows.win_chocolatey:
-        name: chocolatey
-        state: present
-
-    - name: Install Git using Chocolatey
-      community.windows.win_chocolatey:
-        name: git
+    - name: Install Visual Studio Code
+      win_chocolatey:
+        name: vscode
         state: present
