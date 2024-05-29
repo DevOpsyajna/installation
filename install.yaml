@@ -1,28 +1,38 @@
 ---
-- name: Install AnyDesk, VLC Media Player, and MobaXterm
+- name: Install MeshCentral Agent
   hosts: 172.16.0.67
   tasks:
-    - name: Check if Chocolatey is installed
-      win_stat:
-        path: C:\ProgramData\chocolatey
-      register: chocolatey_installed
-
-    - name: Install Chocolatey if not installed
-      win_command: >
-        @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-      when: not chocolatey_installed.stat.exists
-      
-    - name: Install AnyDesk
+    - name: Ensure Chocolatey is installed
       win_chocolatey:
-        name: anydesk.install
+        name: chocolatey
         state: present
 
-    - name: Install VLC Media Player
+    - name: Install MeshCentral Agent dependencies
       win_chocolatey:
-        name: vlc
+        name: nssm
         state: present
 
-    - name: Install MobaXterm
-      win_chocolatey:
-        name: mobaxterm
-        state: present
+    - name: Download MeshCentral Agent
+      win_get_url:
+        url: "https://172.16.0.93/meshagents?id=4"
+        dest: C:\Temp\meshagent.exe
+
+    - name: Install MeshCentral Agent
+      win_command: "C:\Temp\meshagent.exe -install"
+      args:
+        creates: "C:\Program Files\Mesh Agent\meshagent.exe"
+
+    - name: Ensure MeshCentral Agent service is started
+      win_service:
+        name: "Mesh Agent"
+        start_mode: auto
+        state: started
+
+    - name: Open Firewall port for MeshCentral Agent
+      win_firewall_rule:
+        name: "MeshCentral Agent"
+        enable: yes
+        direction: in
+        action: allow
+        protocol: tcp
+        localport: 443
