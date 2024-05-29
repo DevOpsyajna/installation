@@ -1,57 +1,13 @@
 ---
-- name: Create Development folder
-  win_file:
-    path: C:\PostgresSQL\
-    state: directory
-- name: Set ACL of Development folder
-  win_acl:
-    path: C:\PostgresSQL\
-    rights: FullControl
-    state: present
-    type: allow
-    user: "{{become_user}}"
-- name: Copy PostgresSQL Server ISO to the server
-  win_copy:
-    src: ./files/PostgresSQL.zip
-    dest: C:\PostgresSQL\PostgresSQL.zip
+- name: Install software on Windows
+  hosts: 172.16.0.67
+  tasks:
+    - name: Ensure Chocolatey is installed
+      community.windows.win_chocolatey:
+        name: chocolatey
+        state: present
 
-- name: Copy PostgresSQL Server ISO to the server
-  win_copy:
-    src: ./files/postgis-bundle-pg12-3.1.1x64.zip
-    dest: C:\PostgresSQL\postgis-bundle-pg12-3.1.1x64.zip
-
-- name: Unzip SQL ISO
-  win_unzip:
-    src: C:\PostgresSQL\PostgresSQL.zip
-    dest: C:\PostgresSQL\
-
-
-- name: Install PostgreSQL with custom data directory
-  win_shell: >
-    Start-Process -Wait -FilePath C:\PostgresSQL\PostgresSQL\postgresql-12.12-1-windows-x64.exe -ArgumentList '--mode unattended','--unattendedmodeui none','--superpassword {{ sql_passwd }}','--serverport 5432','--installdir "{{ install_dir }}"','--datadir "{{ data_dir }}"'
-  become: yes
-  become_method: runas
-  become_user: Admin
-  args:
-    executable: powershell.exe
-
-- name: Unzip Postgis
-  win_unzip:
-    src: C:\PostgresSQL\postgis-bundle-pg12-3.1.1x64.zip
-    dest: {{ install_dir }}
-
-- name: Copy pg_hba to the server
-  win_copy:
-    src: ./files/pg_hba.conf
-    dest: {{ data_dir }}
-
-- name: Restart a service
-  ansible.windows.win_service:
-    name: postgresql-x64-12
-    state: restarted
-	
-- name: Set service startup mode to auto and ensure it is started
-  ansible.windows.win_service:
-    name: postgresql-x64-12
-    start_mode: auto
-    state: started
+    - name: Install Git using Chocolatey
+      community.windows.win_chocolatey:
+        name: git
+        state: present
