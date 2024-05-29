@@ -1,10 +1,16 @@
 ---
-- name: Install Visual Studio Code using Chocolatey
+- name: Install Chocolatey and Visual Studio Code
   hosts: 172.16.0.67
   tasks:
-    - name: Install Chocolatey if not already installed
+    - name: Check if Chocolatey is installed
+      win_stat:
+        path: C:\ProgramData\chocolatey
+      register: chocolatey_installed
+
+    - name: Install Chocolatey if not installed
       win_command: >
-        @"C:\Windows\System32\WindowsPowerShell\v1.0" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"  # Install Chocolatey if not already installed
+        @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+      when: not chocolatey_installed.stat.exists
 
     - name: Install Visual Studio Code
       win_chocolatey:
