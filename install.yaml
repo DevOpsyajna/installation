@@ -4,7 +4,7 @@
   tasks:
     - name: Install AnyDesk
       win_chocolatey:
-        name: anydesk
+        name: anydesk.install
         state: present
 
     - name: Install VLC Media Player
