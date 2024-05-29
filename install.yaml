@@ -17,68 +17,39 @@
 
 - name: Copy PostgresSQL Server ISO to the server
   win_copy:
-    src: ./files/postgre.ps1
-    dest: C:\PostgresSQL\postgre.ps1
-
-- name: Copy PostgresSQL Server ISO to the server
-  win_copy:
-    src: ./files/postgis.ps1
-    dest: C:\PostgresSQL\postgis.ps1
-
-- name: Copy PostgresSQL Server ISO to the server
-  win_copy:
-    src: ./files/postgis
-    dest: C:\PostgresSQL\
+    src: ./files/postgis-bundle-pg12-3.1.1x64.zip
+    dest: C:\PostgresSQL\postgis-bundle-pg12-3.1.1x64.zip
 
 - name: Unzip SQL ISO
   win_unzip:
     src: C:\PostgresSQL\PostgresSQL.zip
     dest: C:\PostgresSQL\
 
-#- name: Install PostgreSQL with custom data directory
-#  win_shell: >
-#    Start-Process -Wait -FilePath C:\PostgresSQL\PostgresSQL\postgresql-12.12-1-windows-x64.exe -ArgumentList '--mode unattended','--unattendedmodeui none','--superpassword track@123','--serverport 5432','--installdir "C:\Program Files\PostgreSQL\12"','--datadir "C:\Program Files\PostgreSQL\12\data"'
-#  become: yes
-#  become_method: runas
-#  become_user: Administrator
-#  args:
-#    executable: powershell.exe
 
-#- name: Unzip Postgis
-#  win_unzip:
-#    src: C:\PostgresSQL\postgis-bundle-pg12-3.1.1x64.zip
-#    dest: C:\PostgresSQL\postgis-bundle-pg12-3.1.1x64
-
-- name: Run ps1
-  win_shell: 'C:\PostgresSQL\postgre.ps1'
+- name: Install PostgreSQL with custom data directory
+  win_shell: >
+    Start-Process -Wait -FilePath C:\PostgresSQL\PostgresSQL\postgresql-12.12-1-windows-x64.exe -ArgumentList '--mode unattended','--unattendedmodeui none','--superpassword {{ sql_passwd }}','--serverport 5432','--installdir "{{ install_dir }}"','--datadir "{{ data_dir }}"'
   become: yes
   become_method: runas
   become_user: Administrator
+  args:
+    executable: powershell.exe
 
-#- name: Copy pg_gis to the server
-#  ansible.builtin.copy:
-#    src: /opt/postgressql/roles/sql/files/postgis/README.txt
-#    dest: C:\Program Files\PostgreSQL\12
-
-#- name: Copy pg_gis to the server
-#  ansible.builtin.copy:
-#    src: /opt/postgressql/roles/sql/files/postgis/bin
-#    dest: C:\Program Files\PostgreSQL\12
-
-- name: Run ps1
-  win_shell: 'C:\PostgresSQL\postgis.ps1'
-  become: yes
-  become_method: runas
-  become_user: Administrator
+- name: Unzip Postgis
+  win_unzip:
+    src: C:\PostgresSQL\postgis-bundle-pg12-3.1.1x64.zip
+    dest: {{ install_dir }}
 
 - name: Copy pg_hba to the server
   win_copy:
     src: ./files/pg_hba.conf
-    dest: C:\Program Files\PostgreSQL\12\data
+    dest: {{ data_dir }}
+
 - name: Restart a service
   ansible.windows.win_service:
     name: postgresql-x64-12
     state: restarted
+	
 - name: Set service startup mode to auto and ensure it is started
   ansible.windows.win_service:
     name: postgresql-x64-12
