@@ -1,5 +1,5 @@
 ---
-- name: Install Chocolatey and Visual Studio Code
+- name: Install Chocolatey and Uninstall Visual Studio Code
   hosts: 172.16.0.67
   tasks:
     - name: Check if Chocolatey is installed
@@ -12,7 +12,12 @@
         @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
       when: not chocolatey_installed.stat.exists
 
-    - name: Install Visual Studio Code
+    - name: Check if Visual Studio Code is installed
+      win_chocolatey_facts:
+      register: chocolatey_packages
+
+    - name: Uninstall Visual Studio Code if installed
       win_chocolatey:
         name: vscode
-        state: present
+        state: absent
+      when: "'vscode' in chocolatey_packages.packages"
