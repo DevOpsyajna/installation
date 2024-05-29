@@ -7,7 +7,7 @@
         name: chocolatey
         state: present
 
-    - name: Install MeshCentral Agent dependencies
+    - name: Install NSSM (Non-Sucking Service Manager)
       win_chocolatey:
         name: nssm
         state: present
@@ -15,12 +15,12 @@
     - name: Download MeshCentral Agent
       win_get_url:
         url: "https://172.16.0.93/meshagents?id=4"
-        dest: C:\Temp\meshagent.exe
+        dest: C:\\Temp\\meshagent.exe
 
     - name: Install MeshCentral Agent
-      win_command: "C:\Temp\meshagent.exe -install"
+      win_command: "C:\\Temp\\meshagent.exe -install"
       args:
-        creates: "C:\Program Files\Mesh Agent\meshagent.exe"
+        creates: "C:\\Program Files\\Mesh Agent\\meshagent.exe"
 
     - name: Ensure MeshCentral Agent service is started
       win_service:
