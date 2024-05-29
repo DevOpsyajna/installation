@@ -2,27 +2,18 @@
 - name: Install AnyDesk, VLC Media Player, and MobaXterm
   hosts: 172.16.0.67
   tasks:
-    - name: Check if Chocolatey is installed
-      win_stat:
-        path: C:\ProgramData\chocolatey
-      register: chocolatey_installed
-
-    - name: Install Chocolatey if not installed
-      win_command: >
-        @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command " [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-      when: not chocolatey_installed.stat.exists
-      
-    - name: Install AnyDesk
+    - name: Uninstall Visual Studio Code using Chocolatey
       win_chocolatey:
-        name: anydesk.install
+        name: vscode
         state: absent
 
-    - name: Install VLC Media Player
-      win_chocolatey:
-        name: vlc
-        state: absent
-
-    - name: Install MobaXterm
-      win_chocolatey:
-        name: mobaxterm
-        state: absent
+    - name: Ensure Visual Studio Code is uninstalled using PowerShell
+      win_shell: |
+        $vscode = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Microsoft Visual Studio Code*" }
+        if ($vscode) {
+            $vscode.Uninstall()
+        } else {
+            Write-Output "Visual Studio Code is not installed."
+        }
+      args:
+        executable: powershell.exe
