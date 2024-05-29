@@ -13,9 +13,11 @@
         state: present
 
     - name: Download MeshCentral Agent
-      win_get_url:
-        url: "https://172.16.0.93/meshagents?id=4"
-        dest: C:\\Temp\\meshagent.exe
+      win_shell: |
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest -Uri "https://172.16.0.93/meshagents?id=4" -OutFile "C:\\Temp\\meshagent.exe" -UseBasicParsing
+      args:
+        executable: powershell
 
     - name: Install MeshCentral Agent
       win_command: "C:\\Temp\\meshagent.exe -install"
