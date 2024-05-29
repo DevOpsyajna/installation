@@ -31,7 +31,7 @@
     Start-Process -Wait -FilePath C:\PostgresSQL\PostgresSQL\postgresql-12.12-1-windows-x64.exe -ArgumentList '--mode unattended','--unattendedmodeui none','--superpassword {{ sql_passwd }}','--serverport 5432','--installdir "{{ install_dir }}"','--datadir "{{ data_dir }}"'
   become: yes
   become_method: runas
-  become_user: Administrator
+  become_user: Admin
   args:
     executable: powershell.exe
 
