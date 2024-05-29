@@ -1,6 +1,6 @@
 ---
 - name: Install software on Windows
-  hosts: windows
+  hosts: 172.16.0.67
   tasks:
     - name: Ensure Chocolatey is installed
       win_chocolatey:
