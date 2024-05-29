@@ -1,8 +1,18 @@
 ---
-- name: Uninstall Visual Studio Code
+- name: Install AnyDesk, VLC Media Player, and MobaXterm
   hosts: 172.16.0.67
   tasks:
-    - name: Uninstall Visual Studio Code
+    - name: Install AnyDesk
       win_chocolatey:
-        name: vscode
-        state: absent
+        name: anydesk
+        state: present
+
+    - name: Install VLC Media Player
+      win_chocolatey:
+        name: vlc
+        state: present
+
+    - name: Install MobaXterm
+      win_chocolatey:
+        name: mobaxterm
+        state: present
