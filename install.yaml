@@ -15,14 +15,17 @@
     - name: Install AnyDesk
       win_chocolatey:
         name: anydesk.install
-        state: present
+        state: absent
 
     - name: Install VLC Media Player
       win_chocolatey:
         name: vlc
-        state: present
+        state: absent
 
     - name: Install MobaXterm
       win_chocolatey:
         name: mobaxterm
-        state: present
+        state: absent
+
+
+\
