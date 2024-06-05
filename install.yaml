@@ -1,6 +1,6 @@
 ---
 - name: Install AnyDesk, VLC Media Player, and MobaXterm
-  hosts: 172.16.0.67
+  hosts: 192.168.100.10
   tasks:
     - name: Check if Chocolatey is installed
       win_stat:
