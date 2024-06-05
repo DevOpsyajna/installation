@@ -14,19 +14,19 @@
     - name: Uninstall AnyDesk
       win_chocolatey:
         name: anydesk.install
-        state: absent
+        state: present
 
     - name: Uninstall VLC Media Player
       win_chocolatey:
         name: vlc
-        state: absent
+        state: present
 
     - name: Uninstall MobaXterm
       win_chocolatey:
         name: mobaxterm
-        state: absent
+        state: present
 
     - name: Uninstall Visual Studio Code
       win_chocolatey:
         name: vscode
-        state: absent
+        state: present
