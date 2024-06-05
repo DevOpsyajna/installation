@@ -1,6 +1,6 @@
 ---
 - name: Install AnyDesk, VLC Media Player, and MobaXterm
-  hosts: 192.168.100.10
+  hosts: 172.16.0.67
   tasks:
     - name: Check if Chocolatey is installed
       win_stat:
@@ -15,14 +15,14 @@
     - name: Install AnyDesk
       win_chocolatey:
         name: anydesk.install
-        state: absent
+        state: present
 
     - name: Install VLC Media Player
       win_chocolatey:
         name: vlc
-        state: absent
+        state: present
 
     - name: Install MobaXterm
       win_chocolatey:
         name: mobaxterm
-        state: absent
+        state: present
