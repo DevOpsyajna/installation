@@ -1,5 +1,5 @@
 - name: Install AnyDesk, VLC Media Player, MobaXterm, and uninstall Visual Studio Code
-  hosts: 172.16.0.67
+  hosts: 192.168.211.244
   tasks:
     - name: Check if Chocolatey is installed
       win_stat:
